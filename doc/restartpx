@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# by-weinj
+# 重启代理服务器
+
+
+# 停止代理
+pro_pid=`ps -ef | grep "tcpProxy " | awk '{print $2}'`
+if [ ${pro_pid} != "" ]; then
+	echo ------kill pid ${pro_pid}
+	kill -9 ${pro_pid}
+
+	sleep 1s 
+fi
+
+# 删除缓存
+rm -rf ~/tcpProxy/src/*.class
+
+# 编译源码
+echo compile tcpProxy
+javac ~/tcpProxy/src/proxy/TcpProxy.java
+
+# 启动项目
+echo start tcpProxy
+nohup java ~/tcpProxy/src/proxy/TcpProxy & tail -f nohup.out
+

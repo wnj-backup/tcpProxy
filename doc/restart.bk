@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# by-weinj
+# 快速重启某个应用
+
+# demo:   restart [taskexpress|innerDirectServer|innermanageServer|taskmanServer|corbankexpress|perbankServer|corporbankServer]
+
+# 第一个参数指定要重启的项目
+if [ "${1}" != "taskexpress" ]&&[ "${1}" != "innerDirectServer" ]&&[ "${1}" != "innermanageServer"] &&[ "${1}" != "taskmanServer"] &&[ "${1}" != "corbankexpress"] &&[ "${1}" != "perbankServer"] &&[ "${1}" != "corporbankServer" ]; then
+	echo "error or null project name!"
+	exit
+fi
+
+# 停止项目
+pro_pid=`ps -ef | grep "\-Dweblogic\.Name=${1} " | awk '{print $2}'`
+if [ ${pro_pid} != "" ]; then
+	echo ------kill pid ${pro_pid}
+	kill -9 ${pro_pid}
+	
+	sleep 1s 
+	echo 7
+	sleep 1s 
+	echo 6
+	sleep 1s 
+	echo 5
+	sleep 1s 
+	echo 4
+	sleep 1s 
+	echo 3
+	sleep 1s 
+	echo 2
+	sleep 1s 
+	echo 1
+	sleep 1s 
+	echo 0
+else
+	echo ------cann\'t find pid, skip kill step
+fi
+
+# 删除缓存
+echo del cached files
+rm -rf /wls/wldomains/ebank_domain/servers/${1}/tmp/*
+
+# 启动项目
+echo start project ${1}
+nohup /wls/wldomains/ebank_domain/bin/startManagedWebLogic.sh ${1} http://localhost:7001 & tail -f nohup.out
+
